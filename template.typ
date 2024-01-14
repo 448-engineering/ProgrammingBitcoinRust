@@ -249,3 +249,7 @@
   h(1fr)
   box(scale(160%, origin: bottom + right, sym.square.stroked))
 })
+
+#let temp_fira(data) = {
+  block(width: 100%, align(center, text(rgb("#7720dfff"), font: "Fira Code", ligatures: true, [#data])))
+}
