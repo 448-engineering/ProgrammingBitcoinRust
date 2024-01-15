@@ -33,7 +33,7 @@ When using or citing the work, you should not imply #link("https://creativecommo
 )
 #pagebreak()
 #set align(center)
-#image("golden-btc-coins.jpg", width: 80%)
+#image("images/golden-btc-coins.jpg", width: 80%)
 
 #set align(left)
 = Introduction
@@ -55,4 +55,4 @@ This book assumes you have installed the Rust Programming Language stable toolch
 
 _Install Sccache crate to improve developer productivity by caching files that don't need to be rebuilt. Install `sccache` from_ #link("https://crates.io/crates/sccache").
 
-#include "chapter1.typ"
+#include "Chapter1/finite-fields.typ"
