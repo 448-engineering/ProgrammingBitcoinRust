@@ -1,0 +1,14 @@
+[package]
+name = "btc-lib"
+version = "1.0.0-alpha"
+authors = ["448 OG <superuser@448.africa>"]
+edition = "2021"
+license = "CC0-1.0"
+description = "A library for learning Programming Bitcoin Book by Jimmy Song but with code rewritten in Rust instead of Python"
+keywords = ["Bitcoin"]
+categories = ["cryptography::cryptocurrencies"]
+homepage = "https://github.com/448-engineering/ProgrammingBitcoinRust"
+repository = "https://github.com/448-engineering/ProgrammingBitcoinRust"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
