@@ -1,4 +1,10 @@
+mod errors;
+pub use errors::*;
+
 fn main() {
+    let a = FieldElement::new(7, 13);
+    let b = FieldElement::new(12, 13);
+    a + b;
     println!("{}", (-27i64).rem_euclid(13));
     println!("{}", 7u32.rem_euclid(3));
 }
@@ -14,19 +20,52 @@ impl FieldElement {
         Self { num, prime }
     }
 
-    pub fn is_within_order(&self) -> Result<&Self, String> {
+    pub fn is_within_order(&self) -> BtcResult<&Self> {
         // By using a Rust `u32` we always ensure the number cannot be less than 0
         // and we avoid checking `num >= prime || num < 0`
         if self.num >= self.prime {
-            let error = String::new()
-                + "Num `"
-                + &self.num.to_string()
-                + "` not in field range `0 to "
-                + &self.prime.to_string()
-                + "`";
-            return Err(error);
+            return Err(BtcError::NumMustBeLessThanPrimeOrder);
         } else {
             Ok(self)
         }
+    }
+}
+
+impl std::ops::Add for FieldElement {
+    /// We want to return an error if the `order` of both sets is not equal
+    type Output = BtcResult<Self>;
+
+    fn add(self, other: Self) -> BtcResult<Self> {
+        // We have to ensure that the elements are from the same finite field,
+        //otherwise this calculation doesn’t have any meaning
+        if self.prime != other.prime {
+            return Err(BtcError::PrimeOrderMustBeEqual);
+        }
+
+        // Addition in a finite field is defined with the modulo operator, as explained earlier.
+        // We return an instance of [Self], which we can conveniently access.
+        // However, in Rust we enforce the return type by wrapping our [Self] as part of the Result using `Ok()`
+        Ok(Self {
+            num: (self.num + other.num).rem_euclid(self.prime),
+            prime: self.prime + other.prime,
+        })
+    }
+}
+
+impl std::ops::Sub for FieldElement {
+    /// We want to return an error if the `order` of both sets is not equal
+    type Output = BtcResult<Self>;
+
+    fn sub(self, other: Self) -> BtcResult<Self> {
+        // We have to ensure that the elements are from the same finite field,
+        //otherwise this calculation doesn’t have any meaning
+        if self.prime != other.prime {
+            return Err(BtcError::PrimeOrderMustBeEqual);
+        }
+
+        Ok(Self {
+            num: (self.num - other.num).rem_euclid(self.prime),
+            prime: self.prime - other.prime,
+        })
     }
 }

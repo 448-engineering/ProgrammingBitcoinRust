@@ -36,14 +36,14 @@ When using or citing the work, you should not imply #link("https://creativecommo
 #image("images/golden-btc-coins.jpg", width: 80%)
 
 #set align(left)
-= Introduction
+* Introduction *
 
 This book will teach you how to program Bitcoin from scratch using the #link("https://www.rust-lang.org/")[
  Rust Programming Language.
 ]
 The original Book by Jimmy Song has code written in Python. This book rewrites that code in Rust Programming Language.
 
-== What you need to know?
+* What you need to know? *
 
 This book assumes you have installed the Rust Programming Language stable toolchain (at least version 1.75) and that you have read through the Rust programming language book. Install the Rust stable toolchain from #link("https://www.rust-lang.org/tools/install"). You can find the book at #link("https://doc.rust-lang.org/book/").
 
@@ -55,4 +55,4 @@ This book assumes you have installed the Rust Programming Language stable toolch
 
 _Install Sccache crate to improve developer productivity by caching files that don't need to be rebuilt. Install `sccache` from_ #link("https://crates.io/crates/sccache").
 
-#include "Chapter1/finite-fields.typ"
+#include "./Chapter1/summary.typ"

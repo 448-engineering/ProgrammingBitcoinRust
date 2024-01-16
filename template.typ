@@ -50,8 +50,8 @@
     margin: if paper-size != "a4" {
       (
         top: (116pt / 279mm) * 100%,
-        left: (126pt / 216mm) * 100%,
-        right: (128pt / 216mm) * 100%,
+        left: (100pt / 216mm) * 100%,
+        right: (102pt / 216mm) * 100%,
         bottom: (94pt / 279mm) * 100%,
       )
     } else {
@@ -252,4 +252,16 @@
 
 #let temp_fira(data) = {
   block(width: 100%, align(center, text(rgb("#7720dfff"), font: "Fira Code", ligatures: true, [#data])))
+}
+
+#let oneline_par(data) = {
+  [#par(first-line-indent: 3em, [#data])]
+}
+
+#let temp_fira_raw(data) = {
+  block(width: 100%, align(center, text(font: "Fira Code", ligatures: true, [#data])))
+}
+
+#let temp_fira_error(data) = {
+  block(width: 100%, align(center, text(rgb("#FF0000ff"), font: "Fira Code", ligatures: true, [#data])))
 }
