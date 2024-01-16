@@ -1,4 +1,4 @@
-#import "../template.typ": *
+#import "./template.typ": *
 
 === Handling Rust Errors
 
@@ -18,7 +18,18 @@ pub type BtcResult<T> = Result<T, BtcError>;
 /// as the same type when we use `?`
 #[derive(PartialEq, Eq)]
 pub enum BtcError {
-    
+    /// Error caused by integer overflow
+    IntegerOverflow
+}
+
+impl fmt::Debug for BtcError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let error_as_str = match self {          
+          Self::IntegerOverflow => "An integer overflow ocurred",
+    };
+
+        write!(f, "{}", error_as_str)
+    }
 }
 
 ```]

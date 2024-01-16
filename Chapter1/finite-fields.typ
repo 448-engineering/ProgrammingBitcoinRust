@@ -83,7 +83,7 @@ We want to represent each finite field element, so in Rust, we’ll be creating 
 The struct represents an element in a field *F#sub[prime]*. The bare bones of the struct look like this:
 #show raw: set text(font: "Fira Code")
 ```rs
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 struct FieldElement {
     num: u32,
     prime: u32,
@@ -127,11 +127,12 @@ pub enum BtcError {
 }
 ```
 
-and then er implement debug for that new element
+and then we implement debug for that new element
 ```rs
 impl fmt::Debug for BtcError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let error_as_str = match self {
+        let error_as_str = match self {          
+          ...
           Self::NumMustBeLessThanPrimeOrder => "The `self.num` field must be less than the `self.prime` field
     };
 

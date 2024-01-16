@@ -85,7 +85,7 @@ impl std::ops::Add for FieldElement {
         // However, in Rust we enforce the return type by wrapping our [Self] as part of the Result using `Ok()`
         Ok(Self {
             num: (self.num + other.num).rem_euclid(self.prime),
-            prime: self.prime + other.prime,
+            prime: self.prime,
         })
     }
 }
@@ -134,7 +134,7 @@ impl std::ops::Sub for FieldElement {
 
         Ok(Self {
             num: (self.num - other.num).rem_euclid(self.prime),
-            prime: self.prime - other.prime,
+            prime: self.prime,
         })
     }
 }

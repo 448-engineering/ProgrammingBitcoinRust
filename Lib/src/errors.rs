@@ -11,6 +11,8 @@ pub type BtcResult<T> = Result<T, BtcError>;
 /// as the same type when we use `?`
 #[derive(PartialEq, Eq)]
 pub enum BtcError {
+    /// Error caused by integer overflow
+    IntegerOverflow,
     /// The `num` field must be less than the `prime` field
     NumMustBeLessThanPrimeOrder,
     /// Return this error if we are trying to add
@@ -22,6 +24,7 @@ pub enum BtcError {
 impl fmt::Debug for BtcError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let error_as_str = match self {
+          Self::IntegerOverflow => "An integer overflow ocurred",
           Self::NumMustBeLessThanPrimeOrder => "The `self.num` field must be less than the `self.prime` field",
           Self::PrimeOrderMustBeEqual => "Cannot add two numbers in different Fields. Prime numbers must be equal in field `self.prime`"
     };
