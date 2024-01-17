@@ -8,12 +8,12 @@ This chapter is going to get you off to a more manageable start. It may seem str
 
 Be aware that this chapter and the next two chapters may feel a bit like you’re eating vegetables, especially if you haven’t done formal math in a long time. I would encourage you to get through them, though, as the concepts and code presented here will be used throughout the book.
 
-=== Learning Higher-Level Math
+== Learning Higher-Level Math
 
 Learning about new mathematical structures can be a bit intimidating, and in this chapter, I hope to dispel the myth that high-level math is difficult. Finite fields, in particular, don’t require all that much more in terms of prior mathematical knowledge than, say, algebra.
 Think of finite fields as something that you could have learned instead of trigonometry, except that the education system you’re a part of decided that trigonometry was more important for you to learn. This is my way of telling you that finite fields are not that hard to learn and require no more background than algebra.
 
-=== Finite Field Definition
+== Finite Field Definition
 
 Mathematically, a finite field is defined as a finite set of numbers and two operations + (addition) and ⋅ (multiplication) that satisfy the following:
 1.  If a and b are in the set, a + b and a ⋅ b are in the set. We call this property *closed*.
@@ -81,6 +81,7 @@ Notice _the order of the field is always 1 more than the largest element_. You m
 
 We want to represent each finite field element, so in Rust, we’ll be creating a struct that represents a single finite field element. Naturally, we’ll name the struct _FieldElement_.
 The struct represents an element in a field *F#sub[prime]*. The bare bones of the struct look like this:
+#pagebreak()
 #show raw: set text(font: "Fira Code")
 ```rs
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -117,6 +118,7 @@ impl FieldElement {
       #temp_fira[if self.num >= self.prime]
 
 We have also introduced _BtcError::NumMustBeLessThanPrimeOrder_ as the return type so we add that to our error enum
+#pagebreak()
 ```rs
 ...
 
@@ -167,5 +169,3 @@ fn main() {
     println!("{:?}", field_element_c.is_within_order());
 }
 ```
-
-#pagebreak()

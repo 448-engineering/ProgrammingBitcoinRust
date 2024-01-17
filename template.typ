@@ -271,6 +271,7 @@
 }
 
 #let dot_f(data) = [#sym.dot#sub[f]#data]
+#let dot_f_none = [#sym.dot#sub[f]]
 
 #let block_grey_bg(data) = block(
   fill: rgb("#eaeaeaff"),

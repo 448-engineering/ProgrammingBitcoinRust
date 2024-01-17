@@ -1,6 +1,7 @@
 #import "../template.typ": *
-#pagebreak()
+
 == Finite Field Addition and Subtraction
+
 Remember that we need to define finite field addition such that we ensure the result is still in the set. That is, we want to make sure that addition in a finite field is closed.
 
 We can use what we just learned, modulo arithmetic, to make addition closed. Let’s say we have a _finite field of 19_:
@@ -37,7 +38,8 @@ In F#sub[19]:
 which means that:
 #temp_fira[$ 9+#sub[f]10 = 0 $]
 And that turns out to be true.
-#pagebreak()
+
+
 Similarly, we can do field subtraction:
 #temp_fira[$ a–#sub[f]b = (a – b)%p $]
 where _a, b #sym.epsilon.alt F#sub[p]_.
@@ -140,4 +142,3 @@ impl std::ops::Sub for FieldElement {
 }
 ```
 
-#pagebreak()

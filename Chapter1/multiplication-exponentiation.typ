@@ -131,7 +131,7 @@ Why don’t we force the exponent to be a FieldElement object? It turns out that
 
 Some of what we’re doing now may seem slow for large numbers, but we’ll use some clever tricks to improve the performance of these algorithms.
 
-=== Exercise 7
+=== Exercise
 
 For _p = 7, 11, 17, 31_, what is this set in _F#sub[p]_?
 #temp_math[$ {1^((p – 1)), 2^((p – 1)), 3^((p – 1)), 4^((p – 1)), ... (p – 1)^((p – 1))} $]
