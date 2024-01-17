@@ -4,6 +4,10 @@ pub use errors::*;
 fn main() {
     println!("{}", (-27i64).rem_euclid(13));
     println!("{}", 7u32.rem_euclid(3));
+
+    let a = FieldElement::new(7, 13);
+    let b = FieldElement::new(8, 13);
+    assert!(a.pow(-3).unwrap() == b);
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -27,8 +31,11 @@ impl FieldElement {
         }
     }
 
-    pub fn pow(&self, exponent: u32) -> BtcResult<Self> {
-        if let Some(exp) = self.num.checked_pow(exponent) {
+    pub fn pow(&self, exponent: i32) -> BtcResult<Self> {
+        // Force number out of becoming a negative
+        let n = exponent.rem_euclid((self.prime - 1) as i32) as u32;
+
+        if let Some(exp) = self.num.checked_pow(n) {
             let modulo = exp.rem_euclid(self.prime);
             Ok(Self {
                 num: modulo,
