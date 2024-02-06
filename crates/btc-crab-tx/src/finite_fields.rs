@@ -1,33 +1,19 @@
-mod errors;
-pub use errors::*;
-
-fn main() {
-    println!("{}", (-27i64).rem_euclid(13));
-    println!("{}", 7u32.rem_euclid(3));
-
-    let a = FieldElement::new(7, 13);
-    let b = FieldElement::new(8, 13);
-    assert!(a.pow(-3).unwrap() == b);
-}
+use crate::{BtcError, BtcResult};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-struct FieldElement {
+pub struct FieldElement {
     num: u32,
     prime: u32,
 }
 
 impl FieldElement {
-    pub fn new(num: u32, prime: u32) -> Self {
-        Self { num, prime }
-    }
-
-    pub fn is_within_order(&self) -> BtcResult<&Self> {
+    pub fn new(num: u32, prime: u32) -> BtcResult<Self> {
         // By using a Rust `u32` we always ensure the number cannot be less than 0
         // and we avoid checking `num >= prime || num < 0`
-        if self.num >= self.prime {
+        if num >= prime {
             return Err(BtcError::NumMustBeLessThanPrimeOrder);
         } else {
-            Ok(self)
+            Ok(Self { num, prime })
         }
     }
 
@@ -47,7 +33,7 @@ impl FieldElement {
     }
 }
 
-impl std::ops::Add for FieldElement {
+impl core::ops::Add for FieldElement {
     /// We want to return an error if the `order` of both sets is not equal
     type Output = BtcResult<Self>;
 
@@ -57,7 +43,6 @@ impl std::ops::Add for FieldElement {
         if self.prime != other.prime {
             return Err(BtcError::PrimeOrderMustBeEqual);
         }
-
         // Addition in a finite field is defined with the modulo operator, as explained earlier.
         // We return an instance of [Self], which we can conveniently access.
         // However, in Rust we enforce the return type by wrapping our [Self] as part of the Result using `Ok()`
@@ -71,14 +56,12 @@ impl std::ops::Add for FieldElement {
 impl std::ops::Sub for FieldElement {
     /// We want to return an error if the `order` of both sets is not equal
     type Output = BtcResult<Self>;
-
     fn sub(self, other: Self) -> BtcResult<Self> {
         // We have to ensure that the elements are from the same finite field,
         //otherwise this calculation doesn’t have any meaning
         if self.prime != other.prime {
             return Err(BtcError::PrimeOrderMustBeEqual);
         }
-
         Ok(Self {
             num: (self.num - other.num).rem_euclid(self.prime),
             prime: self.prime,
@@ -89,7 +72,6 @@ impl std::ops::Sub for FieldElement {
 impl std::ops::Mul for FieldElement {
     /// We want to return an error if the `order` of both sets is not equal
     type Output = BtcResult<Self>;
-
     fn mul(self, other: Self) -> BtcResult<Self> {
         // We have to ensure that the elements are from the same finite field,
         //otherwise this calculation doesn’t have any meaning
@@ -101,5 +83,85 @@ impl std::ops::Mul for FieldElement {
             num: (self.num * other.num).rem_euclid(self.prime),
             prime: self.prime,
         })
+    }
+}
+
+#[cfg(test)]
+mod sanity_checks {
+    use crate::FieldElement;
+
+    #[test]
+    fn equality() {
+        let a = FieldElement::new(7, 13);
+        let b = FieldElement::new(6, 13);
+
+        assert!(a.is_ok());
+        assert!(b.is_ok());
+
+        assert!(a == a);
+        assert!(b == b);
+
+        assert_eq!(false, (a.unwrap() == b.unwrap()));
+    }
+
+    #[test]
+    fn addition() {
+        let a = FieldElement::new(7, 13);
+        let b = FieldElement::new(12, 13);
+        let c = FieldElement::new(6, 13);
+
+        assert!(a.is_ok());
+        assert!(b.is_ok());
+        assert!(c.is_ok());
+
+        assert!((a.unwrap() + b.unwrap()) == c);
+    }
+
+    #[test]
+    fn subtraction() {
+        let a = FieldElement::new(7, 13);
+        let b = FieldElement::new(6, 13);
+        let c = FieldElement::new(1, 13);
+
+        assert!(a.is_ok());
+        assert!(b.is_ok());
+        assert!(c.is_ok());
+
+        assert!((a.unwrap() - b.unwrap()) == c);
+    }
+
+    #[test]
+    fn multiplication() {
+        let a = FieldElement::new(3, 13);
+        let b = FieldElement::new(12, 13);
+        let c = FieldElement::new(10, 13);
+
+        assert!(a.is_ok());
+        assert!(b.is_ok());
+        assert!(c.is_ok());
+
+        assert!((a.unwrap() * b.unwrap()) == c);
+    }
+
+    #[test]
+    fn power() {
+        let a = FieldElement::new(3, 13);
+        let b = FieldElement::new(1, 13);
+
+        assert!(a.is_ok());
+        assert!(b.is_ok());
+
+        assert!(a.unwrap().pow(3) == b);
+    }
+
+    #[test]
+    fn negative_power() {
+        let a = FieldElement::new(3, 13);
+        let b = FieldElement::new(1, 13);
+
+        assert!(a.is_ok());
+        assert!(b.is_ok());
+
+        assert!(a.unwrap().pow(-3) == b);
     }
 }
