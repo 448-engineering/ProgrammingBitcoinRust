@@ -1,21 +1,18 @@
+use sha2::{digest::KeyInit, Sha256};
+
 use crate::{BtcError, BtcResult, TxVersion, VarInt, TX_ID_LEN, TX_VERSION_BYTE_LEN};
 use std::io::{BufRead, Cursor, Read};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct BtcTx {
     version: TxVersion,
-    inputs: u8,
-    outputs: u8,
-    locktime: u8,
+    inputs: Vec<TxInput>,
+    outputs: Vec<TxOutput>,
+    locktime: u32,
 }
 
 impl BtcTx {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    pub fn from_bytes(bytes: impl AsRef<[u8]>) -> BtcResult<Self> {
-        let mut outcome = Self::default();
+    pub fn from_hex_bytes(bytes: impl AsRef<[u8]>) -> BtcResult<Self> {
         let mut bytes = Cursor::new(bytes.as_ref());
 
         // Check if there are enough bytes to get te transaction version from
@@ -25,14 +22,21 @@ impl BtcTx {
 
         let mut version_bytes = [0u8; TX_VERSION_BYTE_LEN];
         bytes.read_exact(&mut version_bytes)?;
-        outcome.version = TxVersion::from_bytes(version_bytes)?;
+        let version = TxVersion::from_bytes(version_bytes)?;
 
-        BtcTx::get_inputs(&mut bytes)?;
+        let inputs = BtcTx::get_inputs(&mut bytes)?;
+        let outputs = BtcTx::outputs_decoder(&mut bytes)?;
+        let locktime = BtcTx::locktime(&mut bytes)?;
 
-        Ok(outcome)
+        Ok(BtcTx {
+            version,
+            inputs,
+            outputs,
+            locktime,
+        })
     }
 
-    fn get_inputs(bytes: &mut Cursor<&[u8]>) -> BtcResult<()> {
+    fn get_inputs(bytes: &mut Cursor<&[u8]>) -> BtcResult<Vec<TxInput>> {
         let mut varint_len = [0u8];
         bytes.read_exact(&mut varint_len)?;
 
@@ -41,25 +45,20 @@ impl BtcTx {
         dbg!(bytes.position());
         dbg!(no_of_inputs);
 
-        /*(0..=no_of_inputs).into_iter().for_each(|_| {
-            let input = BtcTx::input_decoder(bytes).unwrap();
-            dbg!(&input);
-        });*/
+        let mut inputs = Vec::<TxInput>::new();
 
-        let input = BtcTx::input_decoder(bytes).unwrap();
-        dbg!(&input);
-        let outputs = BtcTx::outputs_decoder(bytes)?;
-        dbg!(&outputs);
+        (0..no_of_inputs).into_iter().for_each(|_| {
+            inputs.push(BtcTx::input_decoder(bytes).unwrap());
+        });
 
-        let locktime = BtcTx::locktime(bytes)?;
-        dbg!(&locktime);
-
-        Ok(())
+        Ok(inputs)
     }
 
     fn input_decoder(bytes: &mut Cursor<&[u8]>) -> BtcResult<TxInput> {
         let mut previous_tx_id = [0u8; 32];
         bytes.read_exact(&mut previous_tx_id)?;
+        previous_tx_id.reverse();
+        dbg!(hex::encode(&previous_tx_id));
 
         let mut previous_tx_index_bytes = [0u8; 4];
 
@@ -117,7 +116,14 @@ impl BtcTx {
             let script_len = VarInt::parse(locking_script_len[0]).integer(bytes).unwrap();
             let mut script = Vec::<u8>::new();
 
-            (0..script_len).for_each(|_| {
+            dbg!(&script_len);
+
+            dbg!(bytes.get_ref().len());
+            dbg!(bytes.position());
+            dbg!(0..script_len);
+
+            (0..script_len).enumerate().for_each(|(index, _)| {
+                //dbg!(index);
                 let mut current_byte = [0u8; 1];
 
                 bytes.read_exact(&mut current_byte).unwrap();
