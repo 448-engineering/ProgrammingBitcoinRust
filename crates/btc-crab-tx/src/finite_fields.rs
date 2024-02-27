@@ -11,7 +11,7 @@ impl FieldElement {
         // By using a Rust `u32` we always ensure the number cannot be less than 0
         // and we avoid checking `num >= prime || num < 0`
         if num >= prime {
-            return Err(BtcError::NumMustBeLessThanPrimeOrder);
+            Err(BtcError::NumMustBeLessThanPrimeOrder)
         } else {
             Ok(Self { num, prime })
         }
